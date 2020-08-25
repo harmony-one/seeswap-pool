@@ -1,0 +1,16 @@
+{
+  "endpoint": "https://api.s0.t.hmny.io",
+  "shard": 0,
+  "chainID": 1,
+  "poolAddr": "0x8902d5f97c7992631134ced8ed8c16e4f09bfef2",
+  "poolTokens": [
+    {
+      "name": "1SEED",
+      "addr": "0x493c9d4362fB4FD1D0C17a6ECad08de33Fc1d8C2"
+    },
+    {
+      "name": "1LINK",
+      "addr": "0x7a791E76BF4d4f3b9B492AbB74E5108180bE6B5a"
+    }
+  ]
+}
