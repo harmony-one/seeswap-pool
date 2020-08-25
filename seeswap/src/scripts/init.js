@@ -10,8 +10,8 @@ const contract = require('../contracts/BPool.json')
 async function initHmy() {
     let ext
     // Only supports OneWallet
-    if (window.onewallet) {
-        ext = await new HarmonyExtension(window.onewallet)
+    if (window.harmony) {
+        ext = await new HarmonyExtension(window.harmony)
         ext.provider = new Provider(config.endpoint).provider
 
         ext.messenger = new Messenger(ext.provider, ChainType.Harmony, config.chainID)
