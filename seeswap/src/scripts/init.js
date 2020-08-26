@@ -9,7 +9,7 @@ const contract = require('../contracts/BPool.json')
 
 async function initHmy() {
     let ext
-    // Only supports OneWallet
+    // Check for MathWallet Extension
     if (window.harmony) {
         ext = await new HarmonyExtension(window.harmony)
         ext.provider = new Provider(config.endpoint).provider
@@ -20,11 +20,34 @@ async function initHmy() {
         ext.blockchain.messenger = ext.messenger
         ext.transactions.messenger = ext.messenger
         ext.contracts.wallet = ext.wallet
-        console.log(ext.provider)
-    } else {
-        console.error("[Error] Unable to load OneWallet extension")
+
+        return ext
     }
-    return ext
+
+    console.log("[Warning] Unable to load MathWallet extension. Trying OneWallet.")
+
+    // Check for OneWallet Extension
+    if (window.onewallet) {
+        ext = await new HarmonyExtension(window.onewallet)
+        ext.provider = new Provider(config.endpoint).provider
+
+        ext.messenger = new Messenger(ext.provider, ChainType.Harmony, config.chainID)
+        ext.setShardID(config.shard)
+        ext.wallet.messenger = ext.messenger
+        ext.blockchain.messenger = ext.messenger
+        ext.transactions.messenger = ext.messenger
+        ext.contracts.wallet = ext.wallet
+
+        // OneWallet support is currently untested.
+        // TODO: Test support & return the ext object when ready.
+        return null
+    }
+
+    console.error("[Error] Unable to load OneWallet or MathWallet extensions.")
+
+    // If neither extension can be found, return null to throw an error in the App
+    // TODO: Support viewing the App without any extensions
+    return null
 }
 
 async function resetWallet(hmy) {
