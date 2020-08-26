@@ -155,21 +155,25 @@ export default {
   mounted() {
     window.addEventListener('load', () => {
       this.hmy = initHmy().then((hmy) => {
-        this.hmy = hmy
-        resetWallet(hmy)
-        initContract(this.hmy).then((contract) => {
-          this.pool = contract
-          this.updateTokens().then(() => {
-            this.updatePool().then(() => {
-              this.enableInput()
+        if (hmy == null) {
+          alert("Please install the MathWallet extension to use SeeSwap!")
+        } else {
+          this.hmy = hmy
+          resetWallet(hmy)
+          initContract(this.hmy).then((contract) => {
+            this.pool = contract
+            this.updateTokens().then(() => {
+              this.updatePool().then(() => {
+                this.enableInput()
+              })
             })
           })
-        })
+        }
       })
     })
   },
 
-  // FIXME: These are all hardcoded to 2 tokens
+  // FIXME: These are generally hard-coded to 2 tokens
   methods: {
     disableInput() {
       this.disabled = true
@@ -177,6 +181,9 @@ export default {
     enableInput() {
       this.disabled = false
     },
+    // TODO: Create an actual component to display errors & success instead of alert
+    // TODO: Add better, more information error messages when able to get EVM errors from the sdk
+    // FIXME: A lot of duplicated code, can be optimized and cleaned up
     doAction() {
       this.disableInput()
 
@@ -188,13 +195,16 @@ export default {
             if (result == true) {
               swapToken(this.pool, this.tokens[0], this.tokens[1], convertedAmount, gasOptions).then((result) => {
                 if (result == true) {
+                  alert("Token swap successful!")
                   location.reload()
                 } else {
-                  // TODO: Display error
+                  alert("[Error] Unable to confirm transaction to swap tokens.")
+                  location.reload()
                 }
               })
             } else {
-              // TODO: Display error
+              alert("[Error] Unable to get token transfer approval.")
+              location.reload()
             }
           })
         } else {
@@ -202,31 +212,52 @@ export default {
             if (result == true) {
               swapToken(this.pool, this.tokens[1], this.tokens[0], convertedAmount, gasOptions).then((result) => {
                 if (result == true) {
+                  alert("Token swap successful!")
                   location.reload()
                 } else {
-                  // TODO: Display error
+                  alert("[Error] Unable to confirm transaction to swap tokens.")
+                  location.reload()
                 }
               })
             } else {
-              // TODO: Display error
+              alert("[Error] Unable to get token transfer approval.")
+              location.reload()
             }
           })
         }
       } else if (this.action === 'JOIN') {
         if (this.token === '1SEED') {
-          joinPool(this.pool, this.tokens[0], convertedAmount, gasOptions).then((result) => {
+          approveToken(this.tokens[0], this.poolAddr, convertedAmount, gasOptions).then((result) => {
             if (result == true) {
-              location.reload()
+              joinPool(this.pool, this.tokens[0], convertedAmount, gasOptions).then((result) => {
+                if (result == true) {
+                  alert("Pool joined!")
+                  location.reload()
+                } else {
+                  alert("[Error] Unable to confirm transaction to join pool.")
+                  location.reload()
+                }
+              })
             } else {
-              // TODO: Display error
+              alert("[Error] Unable to get token transfer approval.")
+              location.reload()
             }
           })
         } else {
-          joinPool(this.pool, this.tokens[1], convertedAmount, gasOptions).then((result) => {
+          approveToken(this.tokens[1], this.poolAddr, convertedAmount, gasOptions).then((result) => {
             if (result == true) {
-              location.reload()
+              joinPool(this.pool, this.tokens[1], convertedAmount, gasOptions).then((result) => {
+                if (result == true) {
+                  alert("Pool joined!")
+                  location.reload()
+                } else {
+                  alert("[Error] Unable to confirm transaction to join pool.")
+                  location.reload()
+                }
+              })
             } else {
-              // TODO: Display error
+              alert("[Error] Unable to get token transfer approval.")
+              location.reload()
             }
           })
         }
@@ -234,22 +265,27 @@ export default {
         if (this.token === '1SEED') {
           exitPool(this.pool, this.tokens[0], convertedAmount, gasOptions).then((result) => {
             if (result == true) {
+              alert("Pool exited!")
               location.reload()
             } else {
-              // TODO: Display error
+              alert("[Error] Unable to confirm transaction to exit pool.")
+              location.reload()
             }
           })
         } else {
           exitPool(this.pool, this.tokens[1], convertedAmount, gasOptions).then((result) => {
             if (result == true) {
+              alert("Pool exited!")
               location.reload()
             } else {
-              // TODO: Display error
+              alert("[Error] Unable to confirm transaction to exit pool.")
+              location.reload()
             }
           })
         }
       }
     },
+    // TODO: Update tokens after successful transaction instead of reloading the entire application
     async updateTokens() {
       let poolTokens = getTokens()
       for (let i = 0; i < poolTokens.length; i++) {
