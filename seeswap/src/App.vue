@@ -208,7 +208,7 @@ export default {
             }
           })
         } else {
-          approveToken(this.tokens[1], this.poolAddr, convertedAmount, gasOptions).then((result) => {
+          approveToken(this.tokens[1], convertedAmount, gasOptions).then((result) => {
             if (result == true) {
               swapToken(this.pool, this.tokens[1], this.tokens[0], convertedAmount, gasOptions).then((result) => {
                 if (result == true) {
@@ -227,7 +227,7 @@ export default {
         }
       } else if (this.action === 'JOIN') {
         if (this.token === '1SEED') {
-          approveToken(this.tokens[0], this.poolAddr, convertedAmount, gasOptions).then((result) => {
+          approveToken(this.tokens[0], convertedAmount, gasOptions).then((result) => {
             if (result == true) {
               joinPool(this.pool, this.tokens[0], convertedAmount, gasOptions).then((result) => {
                 if (result == true) {
@@ -244,7 +244,7 @@ export default {
             }
           })
         } else {
-          approveToken(this.tokens[1], this.poolAddr, convertedAmount, gasOptions).then((result) => {
+          approveToken(this.tokens[1], convertedAmount, gasOptions).then((result) => {
             if (result == true) {
               joinPool(this.pool, this.tokens[1], convertedAmount, gasOptions).then((result) => {
                 if (result == true) {
