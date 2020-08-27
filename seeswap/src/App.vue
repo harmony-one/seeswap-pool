@@ -187,6 +187,11 @@ export default {
     doAction() {
       this.disableInput()
 
+      if (this.amount <= 0) {
+        alert("[Error] Amount should be greater than 0")
+        location.reload()
+      }
+
       let convertedAmount = BN(this.amount).mul(unitBN)
 
       if (this.action === 'SWAP') {
